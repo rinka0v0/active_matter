@@ -19,12 +19,17 @@ NOISE = 0.05
 x = np.random.rand(N, 2) * 2 - 1
 v = (np.random.rand(N, 2) * 2 - 1 ) * MIN_VEL
 
+# 粒子の密度一定にする場合
+# x = np.random.rand(N, 2) * (N / 1000 + 1) - 1
+
+# 初期速度を同一の方向を向かせる場合
+# v = np.full((N, 2), 0.01)
 
 dv_impact = np.empty((N,2))
 dv_boundary = np.empty((N,2))
 
 # グラフをプロットするための準備
-xy_lim = 1.5                            # グラフのx,y軸の表示制限
+xy_lim = 4.0                            # グラフのx,y軸の表示制限
 time_position_x = xy_lim - xy_lim/2     # 時間表示の位置（x座標）
 time_position_y = xy_lim - xy_lim/4     # 時間表示の位置（y座標）
 graph_title = "Vicsek model (Standerd ver)"   # グラフのタイトル
@@ -52,7 +57,7 @@ for time in range(time_limit):
         dv_impact[i] = V0 * np.average(impact_v, axis=0) / abs(np.average(impact_v, axis=0)) + np.array([np.random.normal(),np.random.normal()]) * NOISE if (len(impact_v) > 0) else 0
 
         dist_center = np.linalg.norm(x_this) # 原点からの距離
-        dv_boundary[i] = - BOUNDARY_FORCE * x_this * (dist_center - 1) / dist_center if (dist_center > 1) else 0
+        dv_boundary[i] = - BOUNDARY_FORCE * x_this * (dist_center - xy_lim) / dist_center if (dist_center > xy_lim) else 0
 
     # 速度のアップデートと上限/下限のチェック
     v += dv_impact + dv_boundary
@@ -79,4 +84,4 @@ anim
 
 print('画像保存開始')
 # gif画像の保存
-anim.save('VicsekModel_Standard_2DSample.gif', writer="pillow")
+anim.save('VicsekModel_R=0.25.gif', writer="pillow")
