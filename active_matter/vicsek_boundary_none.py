@@ -5,33 +5,34 @@ import matplotlib.animation as anime
 from matplotlib import rc
 
 N = 1000
-IMPACT_RADIUS = 0.2
-IMPACT_ANGLE = 1.0
+IMPACT_RADIUS = 0.18
+IMPACT_ANGLE = 10
 
 # 速度の上限/下限
 MIN_VEL = 0.005
 MAX_VEL = 0.03
 
-V0 = 0.1
+V0 = 0.03
 NOISE = 0.01
 
 x = np.random.rand(N, 2) * 2 - 1
 v = (np.random.rand(N, 2) * 2 - 1 ) * MIN_VEL
 
-
 dv_impact = np.empty((N,2))
 dv_boundary = np.empty((N,2))
 
 # グラフをプロットするための準備
-xy_lim = 3.0                      # グラフのx,y軸の表示制限
-time_position_x = xy_lim - xy_lim / 2     # 時間表示の位置（x座標）
-time_position_y = xy_lim - xy_lim / 4     # 時間表示の位置（y座標）
+xy_lim = 1.0                      # グラフのx,y軸の表示制限
+# time_position_x = xy_lim - xy_lim / 2     # 時間表示の位置（x座標）
+# time_position_y = xy_lim - xy_lim / 4     # 時間表示の位置（y座標）
+time_position_x = xy_lim   # 時間表示の位置（x座標）
+time_position_y = xy_lim + 0.8   # 時間表示の位置（y座標）
 graph_title = "Vicsek model (Standerd ver)"   # グラフのタイトル
 
 fig, ax = plt.subplots() # figオブジェクトの作成
 ims = []               # gifのための複数画像を入れる入れ物
 
-time_limit = 300
+time_limit = 600
 progress = 0
 for time in range(time_limit):
     if time % (time_limit / 100) == 0:
@@ -51,17 +52,23 @@ for time in range(time_limit):
         # 粒子iの速度の変化量を計算
         # TODO: 速度を一定にする
         random_array = np.array([np.random.normal(),np.random.normal()])
-        dv_impact[i] = V0 * np.average(impact_v, axis=0) / abs(np.average(impact_v, axis=0)) + random_array * NOISE if (len(impact_v) > 0) else 0
+        dv_impact[i] = V0 * np.average(impact_v, axis=0) / abs(np.average(impact_v, axis=0)) + random_array * NOISE if (len(impact_v) > 0) else random_array
 
     # 速度のアップデートと上限/下限のチェック
     v += dv_impact
 
+    # for i in range(N):
+    #     v_abs = np.linalg.norm(v[i])
+    #     if (v_abs < MIN_VEL):
+    #         v[i] = MIN_VEL * v[i] / v_abs
+    #     elif (v_abs > MAX_VEL):
+    #         v[i] = MAX_VEL * v[i] / v_abs
+
+    # 速度を一定にする
     for i in range(N):
         v_abs = np.linalg.norm(v[i])
-        if (v_abs < MIN_VEL):
-            v[i] = MIN_VEL * v[i] / v_abs
-        elif (v_abs > MAX_VEL):
-            v[i] = MAX_VEL * v[i] / v_abs
+        if (v_abs != V0):
+            v[i] = V0 * v[i] / v_abs
     
     # 位置のアップデート
     x += v
@@ -107,4 +114,4 @@ anim
 
 print('画像保存開始')
 # gif画像の保存
-anim.save('boundary_none.gif', writer="pillow")
+anim.save('Hakumon_R=0.18_N=1000.gif', writer="pillow")
