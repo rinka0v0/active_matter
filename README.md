@@ -8,3 +8,4 @@
 - vispy 0.11.0 
 - PyQt5 5.15.7 
 - matplotlib 3.6.1 
+- docker
