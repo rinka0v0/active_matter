@@ -103,5 +103,6 @@ for r in range(1,101,4):
             order_parameter += vi
         order_parameter = np.linalg.norm(order_parameter, ord=2) / (N * V0)
         plt.scatter(IMPACT_RADIUS, order_parameter, c='blue')
-            
-plt.show()
+
+plt.savefig("R_orderParameter.png")   
+# plt.show()
